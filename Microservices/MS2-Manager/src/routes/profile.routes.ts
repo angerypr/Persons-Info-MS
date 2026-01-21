@@ -79,4 +79,22 @@ router.put(
   }
 );
 
+router.get(
+  "/get-profile/:id",
+  apiKeyMiddleware,
+  async (req, res) => {
+    try {
+      const profile = await Profile.findById(req.params.id);
+
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found"});
+      }
+
+      res.json(profile);
+    } catch (error) {
+      res.status(400).json({error: "Invalid ID format"});
+    }
+  }
+);
+
 export default router;
