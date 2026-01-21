@@ -1,3 +1,5 @@
+import https from "https";
+import fs from "fs";
 import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database";
@@ -7,7 +9,6 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-
 connectDB();
 
 app.get("/health", (_, res) => {
@@ -16,8 +17,15 @@ app.get("/health", (_, res) => {
 
 app.use("/api", profileRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`MS2 Manager running on port ${process.env.PORT}`);
+const PORT: number = parseInt(process.env.PORT || "3000", 10);
+
+const options = {
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert")
+};
+
+https.createServer(options, app).listen(PORT, () => {
+  console.log(`MS2 Manager running on https://localhost:${PORT}`);
 });
 
 

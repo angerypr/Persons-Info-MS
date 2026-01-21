@@ -1,3 +1,5 @@
+import https from "https";
+import fs from "fs";
 import express from "express";
 import dotenv from "dotenv";
 import profileRoutes from "./routes/profile.routes";
@@ -13,7 +15,13 @@ app.get("/health", (_, res) => {
 
 app.use("/api", profileRoutes);
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`MS1 Reader running on port ${PORT}`);
+const PORT: number = parseInt(process.env.PORT || "3001", 10);
+
+const options = {
+    key: fs.readFileSync("server.key"),
+    cert: fs.readFileSync("server.cert")
+};
+
+https.createServer(options, app).listen(PORT, () => {
+    console.log(`MS1 Reader running on https://localhost:${PORT}`);
 });
