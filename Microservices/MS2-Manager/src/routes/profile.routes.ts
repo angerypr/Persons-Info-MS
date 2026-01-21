@@ -43,4 +43,40 @@ router.delete(
   }
 );
 
+router.put(
+  "/update-profile/:id",
+  authMiddleware,
+  apiKeyMiddleware,
+  async (req, res) => {
+    try {
+      const updatedProfile = await Profile.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new:true,
+          runValidators:true
+        }
+      );
+
+      if (!updatedProfile) {
+        return res.status(404).json({
+          error: "Profile not found"
+        });
+      }
+
+      res.json(updatedProfile);
+    } catch (error: any) {
+      if (error.code === 11000) {
+        return res.status(409).json({
+          error: "Email already exists"
+        });
+      }
+
+      res.status(400).json({
+        error: "Profile update failed"
+      });
+    }
+  }
+);
+
 export default router;
