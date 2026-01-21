@@ -1,0 +1,28 @@
+services:
+  ms1-reader:
+    build: ./Microservices/MS1-Reader
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./Microservices/MS1-Reader/.env
+    depends_on:
+      - ms2-manager
+
+  ms2-manager:
+    build: ./Microservices/MS2-Manager
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Microservices/MS2-Manager/.env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+volumes:
+  mongo_data: {}
